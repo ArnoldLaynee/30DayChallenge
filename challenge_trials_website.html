@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trial Challenges</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #0f172a;
+      --accent: #38bdf8;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #020617, #0f172a);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 2rem;
+      text-align: center;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    main {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #1f2937;
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .header-row img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .tag {
+      font-size: .75rem;
+      padding: .25rem .6rem;
+      border-radius: 999px;
+      background: #020617;
+      border: 1px solid #1e293b;
+      color: var(--muted);
+      width: fit-content;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+
+    button {
+      background: #020617;
+      color: var(--text);
+      border: 1px solid #1e293b;
+      padding: .5rem .8rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button.active {
+      background: var(--accent);
+      color: #020617;
+      border-color: var(--accent);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      border-top: 1px solid #1e293b;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Trial System</h1>
+  <p>No excuses. Only execution.</p>
+</header>
+
+<main id="trials"></main>
+
+<footer>
+  Total Fear: <strong id="fearTotal">0</strong>
+</footer>
+
+<script>
+  const trials = [
+    { name: "Trial of Water", img: "https://img.icons8.com/fluency/48/water.png", type: "Personal", options: ["3 Liters","4 Liters","5 Liters"], fears: [1,2,3] },
+    { name: "Trial of Perseverance", img: "https://img.icons8.com/fluency/48/brain.png", type: "Personal", options: ["1 Hour","2 Hours","3 Hours","4 Hours"], fears: [1,2,3,4] },
+    { name: "Trial of Hunger", img: "https://img.icons8.com/fluency/48/no-food.png", type: "Personal", options: ["2 Meals","1 Meal","0 Meals"], fears: [1,2,3] },
+    { name: "Trial of Silence", img: "https://img.icons8.com/fluency/48/mute.png", type: "Personal", options: ["No Speech – 1 Hour"], fears: [2] },
+    { name: "Trial of Waking", img: "https://img.icons8.com/fluency/48/alarm-clock.png", type: "Joint", options: ["Wake at 6","Wake at 7","Wake at 8"], fears: [3,2,1] },
+    { name: "Trial of Time", img: "https://img.icons8.com/fluency/48/running.png", type: "Personal", options: ["60 min / 5 km","55 min / 5 km","50 min / 5 km"], fears: [1,2,3] },
+    { name: "Trial of Debt", img: "https://img.icons8.com/fluency/48/money.png", type: "Personal", options: ["100 TL Limit","75 TL Limit","40 TL Limit"], fears: [1,2,3] },
+    { name: "Trial of Endurance", img: "https://img.icons8.com/fluency/48/shield.png", type: "Personal", options: ["15 min Breaks","10 min Breaks","5 min Breaks"], fears: [1,2,3] },
+    { name: "Trial of Luck", img: "https://img.icons8.com/fluency/48/dice.png", type: "Personal", options: ["0–150 Steps","0–100 Steps","0–50 Steps"], fears: [1,2,3] },
+    { name: "Trial of Wisdom", img: "https://img.icons8.com/fluency/48/book.png", type: "Personal", options: ["25 Pages","50 Pages","75 Pages","100 Pages"], fears: [1,2,3,4] }
+  ];
+
+  const container = document.getElementById("trials");
+  const fearTotalEl = document.getElementById("fearTotal");
+  let totalFear = 0;
+
+  trials.forEach(trial => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const headerRow = document.createElement("div");
+    headerRow.className = "header-row";
+
+    const img = document.createElement("img");
+    img.src = trial.img;
+    img.alt = trial.name;
+
+    const title = document.createElement("h2");
+    title.textContent = trial.name;
+
+    headerRow.appendChild(img);
+    headerRow.appendChild(title);
+
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = trial.type;
+
+    const optionsDiv = document.createElement("div");
+    optionsDiv.className = "options";
+
+    let selectedFear = 0;
+
+    trial.options.forEach((opt, i) => {
+      const btn = document.createElement("button");
+      btn.textContent = `${opt} (+${trial.fears[i]} Fear)`;
+      btn.onclick = () => {
+        totalFear -= selectedFear;
+        selectedFear = trial.fears[i];
+        totalFear += selectedFear;
+        fearTotalEl.textContent = totalFear;
+        [...optionsDiv.children].forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+      };
+      optionsDiv.appendChild(btn);
+    });
+
+    card.appendChild(headerRow);
+    card.appendChild(tag);
+    card.appendChild(optionsDiv);
+    container.appendChild(card);
+  });
+</script>
+
+</body>
+</html>
